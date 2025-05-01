@@ -3,13 +3,44 @@ import java.util.List;
 
 public class Usuarios {
     private String nome;
-    private String tipo;
-    private String departamento;
-    private List<Pedidos> pedidos = new ArrayList<>();
+    private String tipo; // "Administrador" ou "Funcionário"
+    private Departamento departamento;
+    private List<Pedido> pedidos = new ArrayList<>();
 
-    public Usuarios(String nome, String tipo, String departamento) {
+    public Usuarios(String nome, String tipo, Departamento departamento) {
         this.nome = nome;
         this.tipo = tipo;
         this.departamento = departamento;
+    }
+
+    public void adicionarPedido(Pedido pedido) {
+        pedidos.add(pedido);
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public String getIniciais() {
+        String[] partes = nome.split(" ");
+        StringBuilder iniciais = new StringBuilder();
+        for (String parte : partes) {
+            if (!parte.isEmpty()) {
+                iniciais.append(parte.charAt(0));
+            }
+        }
+        return iniciais.toString().toUpperCase();
     }
 }

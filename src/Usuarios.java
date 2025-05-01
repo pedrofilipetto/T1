@@ -5,7 +5,7 @@ public class Usuarios {
     private String nome;
     private String tipo; // "Administrador" ou "Funcionário"
     private Departamento departamento;
-    private List<Pedido> pedidos = new ArrayList<>();
+    private List<Pedidos> pedidos = new ArrayList<>();
 
     public Usuarios(String nome, String tipo, Departamento departamento) {
         this.nome = nome;
@@ -13,11 +13,11 @@ public class Usuarios {
         this.departamento = departamento;
     }
 
-    public void adicionarPedido(Pedido pedido) {
+    public void adicionarPedido(Pedidos pedido) {
         pedidos.add(pedido);
     }
 
-    public List<Pedido> getPedidos() {
+    public List<Pedidos> getPedidos() {
         return pedidos;
     }
 

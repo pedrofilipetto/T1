@@ -93,11 +93,32 @@ public class Main {
         Usuarios u3 = new Usuarios("Lucas", "Funcionario", d2);
         Usuarios u4 = new Usuarios("Ana", "Funcionario", d3);
         Usuarios u5 = new Usuarios("Pedro", "Funcionario", d4);
+        Usuarios u6 = new Usuarios("Carla", "Funcionario", d1);
+        Usuarios u7 = new Usuarios("Rafael", "Funcionario", d2);
+        Usuarios u8 = new Usuarios("Fernanda", "Funcionario", d3);
+        Usuarios u9 = new Usuarios("Bruno", "Funcionario", d4);
+        Usuarios u10 = new Usuarios("Juliana", "Funcionario", d5);
+        Usuarios u11 = new Usuarios("Gustavo", "Funcionario", d1);
+        Usuarios u12 = new Usuarios("Patricia", "Funcionario", d2);
+        Usuarios u13 = new Usuarios("Renato", "Funcionario", d3);
+        Usuarios u14 = new Usuarios("Camila", "Funcionario", d4);
+        Usuarios u15 = new Usuarios("Thiago", "Funcionario", d5);
+        
         usuarios.add(u1);
         usuarios.add(u2);
         usuarios.add(u3);
         usuarios.add(u4);
         usuarios.add(u5);
+        usuarios.add(u6);
+        usuarios.add(u7);
+        usuarios.add(u8);
+        usuarios.add(u9);
+        usuarios.add(u10);
+        usuarios.add(u11);
+        usuarios.add(u12);
+        usuarios.add(u13);
+        usuarios.add(u14);
+        usuarios.add(u15);
 
         usuarioAtual = u1;
     }
@@ -478,11 +499,32 @@ public class Main {
     // Número de pedidos total, divididos entre aprovados e reprovados (com
     // percentuais).
     private static void visualizarTotaisPedidos() {
+        long total = pedidos.size();
+        long aprovados = pedidos.stream().filter(p -> p.getStatus().equalsIgnoreCase("Aprovado")).count();
+        long reprovados = pedidos.stream().filter(p -> p.getStatus().equalsIgnoreCase("Reprovado")).count();
 
+        System.out.println("\n=== Totais de Pedidos ===");
+        System.out.println("Total: " +total);
+        System.out.println("Aprovados: " + aprovados + " (" + (total > 0 ? (aprovados * 100 / total) :0) + "%)");
+        System.out.println("Reprovados: " + reprovados + " (" + (total > 0 ? (reprovados * 100 / total) :0) + "%)");
     }
 
     // Número de pedidos nos últimos 30 dias e seu valor médio.
     private static void visualizarTotal30Dias() {
+        LocalDate hoje = LocalDate.now();
+        LocalDate limite = hoje.minusDays(30);
+
+
+        List<Pedidos> ultimos30Dias = pedidos.stream()
+            .filter(p -> p.getDataInicial().isAfter(limite) || p.getDataInicial().isEqual(limite)).toList();
+
+        double soma = ultimos30Dias.stream()
+            .mapToDouble(Pedidos :: getValorTotal)
+            .sum();
+
+        System.out.println("\n=== Pedidos nos Últimos 30 dias ===");
+        System.out.println("Total de pedidos: " + ultimos30Dias.size());
+        System.out.println("Valor médio: R$" + (ultimos30Dias.isEmpty() ? 0 : soma / ultimos30Dias.size()));
 
     }
 

@@ -530,7 +530,26 @@ public class Main {
 
     // Detalhes do pedido de aquisição de maior valor ainda aberto.
     private static void mostrarPedidoValorMaiorAberto() {
+        if (pedidos.isEmpty()) {
+            System.out.println("Nenhum pedido encontrado.");
+            return;
+        }
 
+        Pedidos maiorPedido = null;
+        double maiorValor = 0;
+
+        for (Pedidos pedido : pedidos){
+            if (pedido.getStatus().equals("Aberto") && pedido.getValorTotal() > maiorValor){
+                maiorPedido = pedido;
+                maiorValor = pedido.getValorTotal();
+            }
+        }
+
+        if (maiorPedido == null) {
+            System.out.println("Nenhum pedido em aberto encontrado");
+        } else {
+            System.out.println("\n Pedido de maior valor em aberto: R$" + maiorValor);
+            exibirDetalhesPedido(maiorPedido);
+        }
     }
-
 }

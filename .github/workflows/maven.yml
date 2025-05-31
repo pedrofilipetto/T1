@@ -16,34 +16,67 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        java: [ '17', '21' ]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 17
+    - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: ${{ matrix.java }}
         distribution: 'temurin'
         cache: maven
+    - name: Clean project
+      run: mvn clean
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Run unit tests
       run: mvn test
+    - name: Generate JaCoCo coverage report
+      run: mvn jacoco:report
+    - name: Run Checkstyle
+      run: mvn checkstyle:check || true
+    - name: Upload test reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: TestReports
+        path: target/surefire-reports
+    - name: Upload JaCoCo coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: CoverageReport
+        path: target/site/jacoco
 
   staging:
     runs-on: ubuntu-latest
-  
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: maven
     - run: mvn --batch-mode --update-snapshots verify
     - run: mkdir staging && cp target/*.jar staging
     - uses: actions/upload-artifact@v4
       with:
         name: Package
         path: staging
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build Docker image
+      run: docker build -t myapp:latest .
+    - name: Save Docker image as artifact
+      run: docker save myapp:latest -o myapp.tar
+    - uses: actions/upload-artifact@v4
+      with:
+        name: DockerImage
+        path: myapp.tar

@@ -3,6 +3,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import models.Departamento;
+import models.Item;
+import models.Pedidos;
+import models.Usuarios;
+
 public class Main {
 
     private static List<Departamento> departamentos = new ArrayList<>();
@@ -501,7 +506,7 @@ public class Main {
     private static void visualizarTotaisPedidos() {
         long total = pedidos.size();
         long aprovados = pedidos.stream().filter(p -> p.getStatus().equalsIgnoreCase("Aprovado")).count();
-        long reprovados = pedidos.stream().filter(p -> p.getStatus().equalsIgnoreCase("Reprovado")).count();
+        long reprovados = pedidos.stream().filter(p -> p.getStatus().equalsIgnoreCase("Rejeitado")).count();
 
         System.out.println("\n=== Totais de Pedidos ===");
         System.out.println("Total: " +total);

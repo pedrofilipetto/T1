@@ -1,3 +1,4 @@
+package models;
 public class Item {
     private String descricao;
     private double valorUnitario;

@@ -1,3 +1,4 @@
+package models;
 public class Departamento {
     private String nome;
     private double valorMaximoPorPedido;

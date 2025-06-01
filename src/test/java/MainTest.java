@@ -1,4 +1,3 @@
-
 import org.junit.jupiter.api.*;
 
 import models.Item;
@@ -31,7 +30,7 @@ class MainTest {
         pedidosField.setAccessible(true);
         ((List<?>) pedidosField.get(null)).clear();
 
-        Main.main(new String[]{}); // Inicializa o sistema (opcional)
+        // Main.main(new String[]{}); // Remova ou comente esta linha para evitar travamento
 
         // Executa o método
         var method = Main.class.getDeclaredMethod("mostrarPedidoValorMaiorAberto");

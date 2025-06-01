@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # Copia o JAR gerado pelo Maven para o container
-COPY target/*.jar app.jar
+COPY staging/*.jar app.jar
 
 # Comando para rodar a aplicação
 ENTRYPOINT ["java", "-jar", "app.jar"]

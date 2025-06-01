@@ -1,4 +1,3 @@
-
 import org.junit.jupiter.api.*;
 
 import models.Item;
@@ -11,12 +10,33 @@ import java.util.*;
 class MainTest {
 
     private final PrintStream originalOut = System.out;
-    private ByteArrayOutputStream outContent;
+    private ByteArrayOutputStream outContent;    
 
     @BeforeEach
-    void setUpStreams() {
+    void setUpStreams() throws Exception {
         outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
+        // Inicializa o sistema como no uso real
+        var inicializar = Main.class.getDeclaredMethod("inicializar");
+        inicializar.setAccessible(true);
+        inicializar.invoke(null);
+        // Troca usuarioAtual por um administrador
+        var usuariosField = Main.class.getDeclaredField("usuarios");
+        usuariosField.setAccessible(true);
+        List<?> usuarios = (List<?>) usuariosField.get(null);
+        Object admin = usuarios.stream()
+            .filter(u -> {
+                try {
+                    return u.getClass().getMethod("getTipo").invoke(u).equals("Administrador");
+                } catch (Exception e) {
+                    return false;
+                }
+            })
+            .findFirst()
+            .orElse(null);
+        var usuarioAtualField = Main.class.getDeclaredField("usuarioAtual");
+        usuarioAtualField.setAccessible(true);
+        usuarioAtualField.set(null, admin);
     }
 
     @AfterEach
@@ -31,7 +51,7 @@ class MainTest {
         pedidosField.setAccessible(true);
         ((List<?>) pedidosField.get(null)).clear();
 
-        Main.main(new String[]{}); // Inicializa o sistema (opcional)
+        // Main.main(new String[]{}); // Remova ou comente esta linha para evitar travamento
 
         // Executa o método
         var method = Main.class.getDeclaredMethod("mostrarPedidoValorMaiorAberto");
@@ -49,15 +69,32 @@ class MainTest {
         List<Pedidos> pedidos = (List<Pedidos>) pedidosField.get(null);
         pedidos.clear();
 
+        var usuarioAtualField = Main.class.getDeclaredField("usuarioAtual");
+        usuarioAtualField.setAccessible(true);
+        Object admin = usuarioAtualField.get(null);
+        // Obtem o departamento do usuário atual
+        var departamentoField = admin.getClass().getDeclaredField("departamento");
+        departamentoField.setAccessible(true);
+        Object departamento = departamentoField.get(admin);
+
         // Cria pedidos
         Pedidos p1 = new Pedidos(LocalDate.now(), null, "Aberto");
         p1.adicionarItem(new Item("Item1", 100, 2)); // total 200
+        p1.setDepartamento((models.Departamento) departamento);
+        p1.setSolicitante((models.Usuarios) admin);
+        admin.getClass().getMethod("adicionarPedido", Pedidos.class).invoke(admin, p1);
 
         Pedidos p2 = new Pedidos(LocalDate.now(), null, "Aberto");
         p2.adicionarItem(new Item("Item2", 300, 1)); // total 300
+        p2.setDepartamento((models.Departamento) departamento);
+        p2.setSolicitante((models.Usuarios) admin);
+        admin.getClass().getMethod("adicionarPedido", Pedidos.class).invoke(admin, p2);
 
         Pedidos p3 = new Pedidos(LocalDate.now(), null, "Aprovado");
         p3.adicionarItem(new Item("Item3", 500, 1)); // total 500
+        p3.setDepartamento((models.Departamento) departamento);
+        p3.setSolicitante((models.Usuarios) admin);
+        admin.getClass().getMethod("adicionarPedido", Pedidos.class).invoke(admin, p3);
 
         pedidos.add(p1);
         pedidos.add(p2);

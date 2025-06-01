@@ -13,6 +13,7 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -30,7 +31,8 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Run unit tests
-      run: mvn test
+      run: mvn -B -e -X test
+      timeout-minutes: 10
     - name: Generate JaCoCo coverage report
       run: mvn jacoco:report
     - name: Run Checkstyle
@@ -45,6 +47,14 @@ jobs:
       with:
         name: CoverageReport
         path: target/site/jacoco
+    - name: Upload Maven logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: MavenLogs
+        path: |
+          target/surefire-reports
+          **/mvn-*.log
 
   staging:
     runs-on: ubuntu-latest
@@ -61,6 +71,14 @@ jobs:
       with:
         name: Package
         path: staging
+    - name: Upload Maven logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: MavenLogs-Staging
+        path: |
+          target/surefire-reports
+          **/mvn-*.log
 
   docker:
     runs-on: ubuntu-latest

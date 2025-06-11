@@ -37,6 +37,11 @@ jobs:
       run: mvn jacoco:report
     - name: Run Checkstyle
       run: mvn checkstyle:check || true
+    - name: Upload Checkstyle report
+      uses: actions/upload-artifact@v4
+      with:
+        name: CheckstyleReport
+        path: target/checkstyle-result.xml
     - name: Upload test reports
       uses: actions/upload-artifact@v4
       with:
@@ -82,7 +87,7 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
-    needs: build
+    needs: staging
     steps:
     - uses: actions/checkout@v4
     - name: Download JAR artifact
